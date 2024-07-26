@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Giỏ hàng</title>
+    <style>
+        .cart-container {
+            width: 80%;
+            margin: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .cart-item img {
+            width: 100px;
+            height: 100px;
+            margin-right: 20px;
+        }
+
+        .product-info {
+            flex-grow: 1;
+        }
+
+        .remove-item {
+            color: red;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .cart-total {
+            font-size: 1.5em;
+            text-align: right;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+<h1>01. Giỏ hàng</h1>
+    <div class="cart-container">
+<!--        <form th:action="@{/cart/update}" th:object="${cart}" method="post">-->
+            <div th:if="${cart.products.size() > 0}">
+                <div class="cart-item" th:each="item : ${cart.products}">
+                    <a th:href="@{'/cart/remove/' + ${item.getKey().id}}" class="remove-item">X</a>
+                    <img th:src="@{${item.getKey().image}}" alt="Product Image">
+                    <div class="product-info">
+                        <h2 th:text="${item.getKey().name}"></h2>
+                        <p>Mã SP: <span th:text="${item.getKey().id}"></span></p>
+                        <p>Đơn giá: <span th:text="${item.getKey().price} + ' đ'"></span></p>
+                        <form th:action="@{'/cart/update/' + ${item.getKey().id}}" method="post">
+                            Số lượng:
+                            <select name="quantity" onchange="this.form.submit()">
+                                <option th:each="i : ${#numbers.sequence(1, 10)}"
+                                        th:value="${i}" th:text="${i}"
+                                        th:selected="${i == item.getKey().quantity}"></option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+                <div class="cart-total">
+                    Tổng cộng: <span th:text="${cart.countTotalPayment()} + ' đ'"></span>
+                </div>
+            </div>
+            <div th:if="${cart.products.size() == 0}">
+                <p>Giỏ hàng trống.</p>
+            </div>
+<!--        </form>-->
+    </div>
+    </body>
+    </html>
